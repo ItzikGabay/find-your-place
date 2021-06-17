@@ -3,16 +3,16 @@ const express = require('express'), app = express()
 const path = require('path')
 const methodOverride = require('method-override')
 const ejsMate = require('ejs-mate')
-const joi = require('join')
 
 // Error handlers
 const catchAsync = require('./utils/catchAsync')
 const ExpressError = require('./utils/ExpressError')
+const {campgroundSchema} = require('./schemas.js')
 
 // DB CONNECTION
 const Campground = require('./models/campground')
 const mongoose = require('mongoose')
-const Joi = require('joi')
+
 
 mongoose.connect('mongodb://localhost:27017/yelp-camp', {
     useNewUrlParser: true,
@@ -31,6 +31,16 @@ app.set('views', path.join(__dirname, 'views'))
 app.use(express.urlencoded({extended: true}))
 app.use(methodOverride('_method'))
 app.engine('ejs', ejsMate)
+
+const validateCampground = (req, res, next) => {
+    const {error} = campgroundSchema.validate(req.body)
+    if(error){
+        const msg = error.details.map(el => el.message).join(',')
+        throw new ExpressError(msg, 400)
+    } else {
+        next()
+    }
+}
 
 
 // --------------------------------------------
@@ -66,25 +76,14 @@ app.get('/campgrounds/:id/edit', catchAsync(async (req, res) => {
 }))
 
 // campgrounds - post (create)
-app.post('/campgrounds', catchAsync(async (req, res) => {
+app.post('/campgrounds', validateCampground, catchAsync(async (req, res) => {
     // if (!req.body.campground) throw new ExpressError('Invalid campground data', 400)
-    const campgroundSchema = Join.object({
-        campground: Joi.object({
-            title: Joi.string().required(),
-            price: Joi.number().required().min(0)
-        }).required()
-    })
-    const {error} = campgroundSchema.validate(req.body)
-    if(error){
-        const msg = error.details.map(el => el.message).join(',')
-        throw new ExpressErrorresu(result.error.details, 400)
-    }
     const campground = new Campground(req.body.campground)
     await campground.save()
     res.redirect(`/campgrounds/${campground._id}`)
 }))
 
-app.put('/campgrounds/:id', catchAsync(async (req, res) => {
+app.put('/campgrounds/:id', validateCampground, catchAsync(async (req, res) => {
     const {id} = req.params
     const campground = await Campground.findByIdAndUpdate(id, {...req.body.campground})
     campground.save()
@@ -106,7 +105,6 @@ app.use((err, req, res, next) => {
     const {statusCode = '500'} = err
     if(!err.message) err.message = 'Something were wrong'
     res.status(statusCode).render('error', {err})
-    res.send('Oh boy!')
 })
 
 app.listen(3000, () => {
