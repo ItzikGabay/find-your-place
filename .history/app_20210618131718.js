@@ -7,12 +7,12 @@ const ejsMate = require('ejs-mate')
 // Error handlers
 const catchAsync = require('./utils/catchAsync')
 const ExpressError = require('./utils/ExpressError')
-const {campgroundSchema, reviewSchema} = require('./schemas.js')
+const {campgroundSchema} = require('./schemas.js')
 
 // DB CONNECTION
-const mongoose = require('mongoose')
 const Campground = require('./models/campground')
-const Review = require('./models/review')
+const review
+const mongoose = require('mongoose')
 
 
 mongoose.connect('mongodb://localhost:27017/yelp-camp', {
@@ -43,15 +43,6 @@ const validateCampground = (req, res, next) => {
     }
 }
 
-const validateReview = (req, res, next) => {
-    const {error} = reviewSchema.validate(req.body)
-    if(error){
-        const msg = error.details.map(el => el.message).join(',')
-        throw new ExpressError(msg, 400)
-    } else {
-        next()
-    }
-}
 
 // --------------------------------------------
 // ------------ Routes ------------------------
@@ -75,7 +66,7 @@ app.get('/campgrounds/new', (req, res) => {
 
 // campgrounds/:id - show
 app.get('/campgrounds/:id', catchAsync(async (req, res) => {
-    const campground = await Campground.findById(req.params.id).populate('reviews')
+    const campground = await Campground.findById(req.params.id)
     res.render('campgrounds/show', {campground})
 }))
 
@@ -106,20 +97,9 @@ app.delete('/campgrounds/:id', catchAsync(async (req, res) => {
     res.redirect('/campgrounds')
 }))
 
-
-// Reviews ----------------------------------------------------------------
-
-app.post('/campgrounds/:id/reviews', validateReview, catchAsync(async (req, res) => {
+app.post('/campgrounds/:id/reviews', catchAsync(async (req, res) => {
     const campground = await Campground.findById(req.params.id)
-    const review = new Review(req.body.review)
-    campground.reviews.push(review)
-    await review.save()
-    await campground.save()
-    res.redirect(`/campgrounds/${campground._id}`)
-}))
 
-app.delete('/campgrounds/:id/reviews/:reviewId', catchAsync(async(req, res) => {
-    
 }))
 
 app.all('*', (req, res, next) => {
