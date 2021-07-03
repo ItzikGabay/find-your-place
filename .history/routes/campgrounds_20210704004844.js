@@ -26,11 +26,15 @@ router.get('/:id', catchAsync(campgrounds.showCampground))
 // campgrounds/:id/edit - edit
 router.get('/:id/edit', isLoggedIn, isAuthor, catchAsync(campgrounds.editCampground))
 
-// campgrounds/:id/edit - edit POST
 router.put('/:id', isLoggedIn, isAuthor, validateCampground, catchAsync(campgrounds.updateCampground))
 
-// campgrounds/:id - DELETE
-router.delete('/:id', isLoggedIn, isAuthor, catchAsync(campgrounds.deleteCampground))
+
+router.delete('/:id', isLoggedIn, isAuthor, catchAsync(async (req, res) => {
+    const {id} = req.params
+    await Campground.findByIdAndDelete(id)
+    req.flash('success', 'Successfuly deleted campground')
+    res.redirect('/campgrounds')
+}))
 
 
 module.exports = router

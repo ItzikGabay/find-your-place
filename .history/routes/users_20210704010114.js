@@ -21,9 +21,18 @@ router.post('/register', catchAsync(users.register))
 router.get('/login', users.renderLogin)
 
 // When client sumbit login form ->
-router.post('/login', passport.authenticate('local', {failureFlash: true, failureRedirect: '/login'}), users.login)
+router.post('/login', passport.authenticate('local', {failureFlash: true, failureRedirect: '/login'}), (req, res) => {
+    req.flash('success', 'You login successfully')
+    const redirectUrl = req.session.returnTo || '/campgrounds'
+    delete req.session.returnTo
+    res.redirect(redirectUrl)
+})
 
 // logout from passport session
-router.get('/logout', users.logout)
+router.get('/logout', (req, res) => {
+    req.logout()
+    req.flash('success', 'You have logged out')
+    res.redirect('/campgrounds')
+})
 
 module.exports = router
