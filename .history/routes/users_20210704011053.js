@@ -13,9 +13,13 @@ router.route('/register')
     .get(users.renderRegisterForm) // register form
     .post(catchAsync(users.register)) // When client sumbit register form
 
+
 router.route('/login')
     .get(users.renderLogin) // Login form
     .post(passport.authenticate('local', {failureFlash: true, failureRedirect: '/login'}), users.login)
+
+// When client sumbit login form ->
+
 
 // logout from passport session
 router.get('/logout', users.logout)

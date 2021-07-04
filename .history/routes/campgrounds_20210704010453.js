@@ -12,22 +12,25 @@ const { isLoggedIn, isAuthor, validateCampground } = require('../middleware')
 
 
 router.route('/')
-    .get(catchAsync(campgrounds.index)) // show index
-    .post(isLoggedIn, validateCampground, catchAsync(campgrounds.createCampground)) // creating a campground
+    .get(catchAsync(campgrounds.index))
 
-
-// campgrounds/new - create 
-// (Must be before of /:id, otherwise it will take '/new' as an undfined ID)
+// campgrounds/new - create
 router.get('/new', isLoggedIn, campgrounds.renderNewForm)
 
-router.route('/:id')
-    .get(catchAsync(campgrounds.showCampground)) // campgrounds/:id - show
-    .put(isLoggedIn, isAuthor, validateCampground, catchAsync(campgrounds.updateCampground)) // campgrounds/:id/edit - edit POST
-    .delete(isLoggedIn, isAuthor, catchAsync(campgrounds.deleteCampground)) // campgrounds/:id - DELETE
+// campgrounds - post (create)
+router.post('/', isLoggedIn, validateCampground, catchAsync(campgrounds.createCampground))
 
-
+// campgrounds/:id - show
+router.get('/:id', catchAsync(campgrounds.showCampground))
 
 // campgrounds/:id/edit - edit
 router.get('/:id/edit', isLoggedIn, isAuthor, catchAsync(campgrounds.editCampground))
+
+// campgrounds/:id/edit - edit POST
+router.put('/:id', isLoggedIn, isAuthor, validateCampground, catchAsync(campgrounds.updateCampground))
+
+// campgrounds/:id - DELETE
+router.delete('/:id', isLoggedIn, isAuthor, catchAsync(campgrounds.deleteCampground))
+
 
 module.exports = router

@@ -15,19 +15,25 @@ router.route('/')
     .get(catchAsync(campgrounds.index)) // show index
     .post(isLoggedIn, validateCampground, catchAsync(campgrounds.createCampground)) // creating a campground
 
+router.route('/:id')
+.get(catchAsync(campgrounds.showCampground))
+.put(isLoggedIn, isAuthor, validateCampground, catchAsync(campgrounds.updateCampground))
+.delete(isLoggedIn, isAuthor, catchAsync(campgrounds.deleteCampground))
 
-// campgrounds/new - create 
-// (Must be before of /:id, otherwise it will take '/new' as an undfined ID)
+// campgrounds/new - create
 router.get('/new', isLoggedIn, campgrounds.renderNewForm)
 
-router.route('/:id')
-    .get(catchAsync(campgrounds.showCampground)) // campgrounds/:id - show
-    .put(isLoggedIn, isAuthor, validateCampground, catchAsync(campgrounds.updateCampground)) // campgrounds/:id/edit - edit POST
-    .delete(isLoggedIn, isAuthor, catchAsync(campgrounds.deleteCampground)) // campgrounds/:id - DELETE
-
-
+// campgrounds/:id - show
+router
 
 // campgrounds/:id/edit - edit
 router.get('/:id/edit', isLoggedIn, isAuthor, catchAsync(campgrounds.editCampground))
+
+// campgrounds/:id/edit - edit POST
+router
+
+// campgrounds/:id - DELETE
+router.
+
 
 module.exports = router
