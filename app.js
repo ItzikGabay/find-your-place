@@ -1,3 +1,7 @@
+if (process.env.NODE_ENV !== 'production') {
+    require('dotenv').config()
+}
+
 // Base Modules
 const express = require('express'), app = express()
 const path = require('path')

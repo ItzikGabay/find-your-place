@@ -2,10 +2,34 @@ const mongoose = require('mongoose')
 const Review = require('../models/review')
 const Schema = mongoose.Schema
 
-// 
+// image schema
+const ImageSchema = new Schema({
+    url: String,
+    filename: String
+});
+
+ImageSchema.virtual('thumbnail').get(function () {
+    return this.url.replace('/upload', '/upload/w_200');
+});
+
+// enable virtual in res.send (disabled by default)
+const opts = { toJSON: { virtuals: true } };
+
+// campground schema
 const CampgroundSchema = new Schema({
     title: String,
-    image: String,
+    images: [ImageSchema],
+    geometry: {
+        type: {
+            type: String,
+            enum: ['Point'],
+            required: true
+        },
+        coordinates: {
+            type: [Number],
+            required: true
+        }
+    },
     price: Number,
     description: String,
     location: String,
@@ -19,13 +43,17 @@ const CampgroundSchema = new Schema({
             ref: 'Review'
         }
     ]
-})
+}, opts);
+
+CampgroundSchema.virtual('properties.popUpMarkup').get(function () {
+    return `<strong><a href="/campgrounds/${this._id}">${this.title}</a></strong><p>${this.description.substring(0, 20)}...</p>`
+});
 
 // After the event happening -> pre/post -> 
-CampgroundSchema.post('findOneAndDelete', async function(doc) {
-    if(doc){
+CampgroundSchema.post('findOneAndDelete', async function (doc) {
+    if (doc) {
         await Review.deleteMany({
-            _id:{ 
+            _id: {
                 $in: doc.reviews
             }
         })
