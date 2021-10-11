@@ -25,8 +25,11 @@ const ExpressError = require('./utils/ExpressError')
 
 // DB Settings & Connections
 const mongoose = require('mongoose')
+// const MongoStore = require('connect-mongo');
+const MongoStore = require('connect-mongo');
+const db_url = process.env.DB_URL;
 
-mongoose.connect('mongodb://localhost:27017/yelp-camp', {
+mongoose.connect(db_url, {
     useNewUrlParser: true,
     useCreateIndex: true,
     useUnifiedTopology: true,
@@ -109,8 +112,22 @@ app.use(
 // Public Directory for files
 app.use(express.static(path.join(__dirname, 'public')))
 
+
+const store = MongoStore.create({
+    mongoUrl: db_url,
+    touchAfter: 24 * 60 * 60,
+    crypto: {
+        secret: 'squirrel'
+    },
+});
+
+store.on("error", function (e) {
+    console.log('ERROR:', e);
+});
+
 // Session settings
 const sessionConfig = {
+    store,
     secret: 'thisisasecret',
     resave: false,
     saveUninitialized: true,

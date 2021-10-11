@@ -1,13 +1,14 @@
 <% layout('layouts/boilerplate') %>
 
 <div class="row">
-    <div class="col-6 offset-3">
-        <div class="alert alert-danger" role="alert">
-            <h4 class="alert-heading"><%= err.message %> </h4>
-            <% if(process.env.NODE_ENV !== 'production') { %>
-                <p><%= err.stack %> </p>
-            <% } %>
-          </div>
+  <div class="col-6 offset-3 text-center">
+    <h1>Error! Please try again.</h1>
+    <div class="alert alert-danger" role="alert">
+      <h4 class="alert-heading"><%= err.message %></h4>
+      <% if(process.env.NODE_ENV !== 'production') { %>
+      <p><b>ERROR DETAILS only in production environment:</b></p>
+      <p><%= err.stack %></p>
+      <% } %>
     </div>
+  </div>
 </div>
-
