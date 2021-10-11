@@ -112,6 +112,7 @@ app.use(
 // Public Directory for files
 app.use(express.static(path.join(__dirname, 'public')))
 
+const secret = process.env.SECRET;
 
 const store = MongoStore.create({
     mongoUrl: db_url,
@@ -125,7 +126,7 @@ store.on("error", function (e) {
     console.log('ERROR:', e);
 });
 
-const secret = process.env.SECRET;
+
 
 // Session settings
 const sessionConfig = {
@@ -183,6 +184,8 @@ app.use((err, req, res, next) => {
     res.status(statusCode).render('error', { err })
 })
 
-app.listen(3000, () => {
+const port = process.env.PORT
+
+app.listen(port, () => {
     console.log('** 1. Server Up and Running Sucessfully!')
 })
