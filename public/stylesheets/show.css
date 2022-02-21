@@ -1,3 +1,72 @@
-.test {
-  font-size: 300px;
+.layout {
+  background-color: white;
+}
+
+.carousel,
+.carousel img {
+  height: 300px;
+  object-fit: cover;
+}
+
+.info {
+  padding: 30px 50px;
+  background-color: rgb(64, 209, 222);
+  color: #111111;
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+  transition: all 0.2s ease-in-out;
+  border-radius: 10px;
+}
+
+.info:hover {
+  background-color: rgb(231, 231, 232);
+  font-size: 20px;
+  transition: all 0.2s ease-in-out;
+}
+
+.title {
+  width: 30%;
+}
+
+.description:before {
+  content: "Description:";
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.description {
+  margin-top: 20px;
+  padding: 20px 50px;
+  background-color: rgb(64, 209, 222);
+  border-radius: 10px;
+}
+.price {
+  margin-top: 20px;
+  padding: 40px 50px;
+  background-color: rgb(231, 231, 231);
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  color: black;
+  font-size: 30px;
+}
+
+.show-footer {
+  display: flex;
+  margin-top: 20px;
+}
+
+.map {
+  min-width: 50%;
+  margin-right: 30px;
+}
+
+.textarea-review {
+  border: 1px solid rgb(178, 178, 178);
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0px 0px 20px 1px rgb(120, 120, 120, 0.1);
 }
